@@ -18,16 +18,16 @@
 # limitations under the License.
 
 # Default values for the plugin
-KUBE_TMUX_BINARY="${KUBE_TMUX_BINARY:-kubectl}"
-KUBE_TMUX_SYMBOL_ENABLE="${KUBE_TMUX_SYMBOL_ENABLE:-true}"
-KUBE_TMUX_SYMBOL_DEFAULT="${KUBE_TMUX_SYMBOL_DEFAULT:-\u2388 }"
-KUBE_TMUX_SYMBOL_USE_IMG="${KUBE_TMUX_SYMBOL_USE_IMG:-false}"
-KUBE_TMUX_NS_ENABLE="${KUBE_TMUX_NS_ENABLE:-true}"
-KUBE_TMUX_DIVIDER="${KUBE_TMUX_DIVIDER-:}"
-KUBE_TMUX_SYMBOL_COLOR="${KUBE_TMUX_SYMBOL_COLOR-blue}"
-KUBE_TMUX_CTX_COLOR="${KUBE_TMUX_CTX_COLOR-red}"
-KUBE_TMUX_NS_COLOR="${KUBE_TMUX_NS_COLOR-cyan}"
-KUBE_TMUX_KUBECONFIG_CACHE="${KUBECONFIG}"
+KUBE_TMUX_BINARY=${KUBE_TMUX_BINARY:-"kubectl"}
+KUBE_TMUX_SYMBOL_ENABLE="${KUBE_TMUX_SYMBOL_ENABLE:-false}"
+KUBE_TMUX_SYMBOL_DEFAULT=${KUBE_TMUX_SYMBOL_DEFAULT:-"\u2388" }
+KUBE_TMUX_SYMBOL_USE_IMG=${KUBE_TMUX_SYMBOL_USE_IMG:-false}
+KUBE_TMUX_NS_ENABLE=${KUBE_TMUX_NS_ENABLE:-true}
+KUBE_TMUX_DIVIDER=${KUBE_TMUX_DIVIDER:-":"}
+KUBE_TMUX_SYMBOL_COLOR=${KUBE_TMUX_SYMBOL_COLOR:-"blue"}
+KUBE_TMUX_CTX_COLOR=${KUBE_TMUX_CTX_COLOR:-"black"}
+KUBE_TMUX_NS_COLOR=${KUBE_TMUX_NS_COLOR:-"black"}
+KUBE_TMUX_KUBECONFIG_CACHE=${KUBECONFIG}
 KUBE_TMUX_UNAME=$(uname)
 KUBE_TMUX_LAST_TIME=0
 
@@ -37,7 +37,7 @@ _kube_tmux_binary_check() {
 
 _kube_tmux_symbol() {
   if ((BASH_VERSINFO[0] >= 4)) && [[ $'\u2388 ' != "\\u2388 " ]]; then
-    KUBE_TMUX_SYMBOL=$'\u2388 '
+    KUBE_TMUX_SYMBOL=$'\ufd31 '
     KUBE_TMUX_SYMBOL_IMG=$'\u2638 '
   else
     KUBE_TMUX_SYMBOL=$'\xE2\x8E\x88 '
@@ -134,21 +134,21 @@ kube_tmux() {
 
   # Symbol
   if [[ "${KUBE_TMUX_SYMBOL_ENABLE}" == true ]]; then
-    KUBE_TMUX+="#[fg=blue]$(_kube_tmux_symbol)#[fg=colour${1}]"
+    KUBE_TMUX+="$(_kube_tmux_symbol)"
   fi
 
   # Context
-  KUBE_TMUX+="#[fg=${2}]${KUBE_TMUX_CONTEXT}"
+  KUBE_TMUX+="${KUBE_TMUX_CONTEXT}"
 
   # Namespace
   if [[ "${KUBE_TMUX_NS_ENABLE}" == true ]]; then
     if [[ -n "${KUBE_TMUX_DIVIDER}" ]]; then
-      KUBE_TMUX+="#[fg=colour250]${KUBE_TMUX_DIVIDER}"
+      KUBE_TMUX+="${KUBE_TMUX_DIVIDER}"
     fi
-    KUBE_TMUX+="#[fg=${3}]${KUBE_TMUX_NAMESPACE}"
+    KUBE_TMUX+="${KUBE_TMUX_NAMESPACE}"
   fi
 
   echo "${KUBE_TMUX}"
 }
 
-kube_tmux "$@"
+kube_tmux $@
